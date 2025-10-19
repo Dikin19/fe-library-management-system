@@ -21,9 +21,8 @@ getAllUsers();
 async function testAuthRegister() {
   try {
     const payload = {
-      id: "1",
-      username: "adminTest",
-      email: "admin@example.com",
+      username: "adminTest1",
+      email: "admin1@example.com",
       password: "123456",
       role: "ADMIN",
     };
