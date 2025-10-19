@@ -4,17 +4,22 @@ import { Link } from "react-router"
 function Home() {
 
   return (
-    <div>
-      
-      <div className="flex justify-center gap-10">
+    <div className="flex justify-center gap-10">
 
-        <h1>HOME</h1>
+      <Link to="/register" className="font-semibold text-red-600 transition-all 
+                    duration-300 ease-in-out hover:text-blue-800 hover:scale-110">
+        Register
+      </Link>
 
-        <Link to="/register" className="font-semibold hover:underline" >
-          Register
-        </Link>
+      <Link to="/" className="font-semibold text-red-600 transition-all 
+                    duration-300 ease-in-out hover:text-blue-800 hover:scale-110">
+        Home
+      </Link>
 
-      </div>
+      <Link to="/login" className="font-semibold text-red-600 transition-all 
+                    duration-300 ease-in-out hover:text-blue-800 hover:scale-110">
+        Login
+      </Link>
 
     </div>
   )

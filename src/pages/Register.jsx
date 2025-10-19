@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import api from "../config/axios.config";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Register() {
+
+    const nav = useNavigate();
 
     const [form, setForm] = useState({ //1
 
@@ -13,11 +15,15 @@ export default function Register() {
         role: "",
     });
 
+    if (localStorage.getItem("access_token")) {
+        return <Navigate to="/" />
+    }
+
     const [message, setMessage] = useState(""); //7
     const [showPassword, setShowPassword] = useState(false); //10
 
     const handleChange = (e) => { //3
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setForm({ ...form, [name]: value })
         console.log(name, ":", value);
     };
@@ -30,7 +36,9 @@ export default function Register() {
 
             const res = await api.post("/auth/register", form)
             setMessage(`Data ${res.data.username || form.username} berhasil terdaftar`) //8
+            nav("/login")
             setForm({ username: "", email: "", password: "", role: "" });
+
 
         } catch (error) {
             setMessage(`Gagal Register ${error.response?.data?.message || error.message}`);//8 //9 deklare dalam return
@@ -47,12 +55,21 @@ export default function Register() {
 
                 <div className="flex justify-center gap-10">
 
-                    <h1>Register</h1>
+                    <Link to="/register" className="font-semibold text-red-600 transition-all 
+                    duration-300 ease-in-out hover:text-blue-800 hover:scale-110">
+                        Register
+                    </Link>
 
                     <Link to="/" className="font-semibold text-red-600 transition-all 
                     duration-300 ease-in-out hover:text-blue-800 hover:scale-110">
                         Home
                     </Link>
+
+                    <Link to="/login" className="font-semibold text-red-600 transition-all 
+                    duration-300 ease-in-out hover:text-blue-800 hover:scale-110">
+                        Login
+                    </Link>
+
                 </div>
 
                 <input type="text" name="username" placeholder="username"
