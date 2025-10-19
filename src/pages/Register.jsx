@@ -1,37 +1,56 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import api from "../config/axios.config";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Register() {
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState({ //1
 
         username: "",
         email: "",
         password: "",
-        role: "ADMIN"
+        role: "",
     });
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value })
+    const [message, setMessage] = useState(""); //7
+    const [showPassword, setShowPassword] = useState(false); //10
+
+    const handleChange = (e) => { //3
+        const {name, value} = e.target;
+        setForm({ ...form, [name]: value })
         console.log(name, ":", value);
     };
 
-    const handleSubmit = (e) =>{
+    const handleSubmit = async (e) => { //5
         e.preventDefault();
         console.log("form submitted:", form);
+
+        try {
+
+            const res = await api.post("/auth/register", form)
+            setMessage(`Data ${res.data.username || form.username} berhasil terdaftar`) //8
+            setForm({ username: "", email: "", password: "", role: "" });
+
+        } catch (error) {
+            setMessage(`Gagal Register ${error.response?.data?.message || error.message}`);//8 //9 deklare dalam return
+
+        }
+
     }
 
     return (
         <div>
 
-            <form onChange={handleSubmit}
-            className="h-screen flex flex-col justify-center w-80 mx-auto gap-5">
+            <form onSubmit={handleSubmit} //6
+                className="h-screen flex flex-col justify-center w-80 mx-auto gap-5">
 
                 <div className="flex justify-center gap-10">
 
                     <h1>Register</h1>
 
-                    <Link to="/" className="font-semibold text-red-600 transition-all duration-300 ease-in-out hover:text-blue-800 hover:scale-110">
+                    <Link to="/" className="font-semibold text-red-600 transition-all 
+                    duration-300 ease-in-out hover:text-blue-800 hover:scale-110">
                         Home
                     </Link>
                 </div>
@@ -40,20 +59,38 @@ export default function Register() {
                     value={form.username} onChange={handleChange}
                     className="border rounded-lg p-1 mt-5" />
 
-                <input type="email" name="email" placeholder="email"
+                <input type="email" name="email" placeholder="email" //2
+                    value={form.email} onChange={handleChange} //4
                     className="border rounded-lg p-1" />
 
-                <input type="password" name="password" placeholder="password"
-                    className="border rounded-lg p-1" />
+                <div className="relative border rounded-lg p-1">
+                    <input type={showPassword ? "text" : "password"} name="password" placeholder="Password" //11
+                        value={form.password} onChange={handleChange}
+                        className="border-none outline-none"
+                    />
+                    <button //12
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600"
+                    >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                </div>
 
-                <select name="role" placeholder="role" className="border rounded-lg p-1">
+
+                <select name="role" value={form.role} onChange={handleChange}
+                    className="border rounded-lg p-1">
+
+                    <option value="">-- Select Role --</option>
                     <option value="ADMIN">ADMIN</option>
                     <option value="MEMBER">MEMBER</option>
                 </select>
 
-                <button type="submit" className="border rounded-lg p-1 mt-10">
+                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded mt-20">
                     Create account
                 </button>
+
+                {message && (<p className="text-center mt-3 text-sm text-gray-700">{message}</p>)}
 
             </form>
 
